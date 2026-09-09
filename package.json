@@ -1,6 +1,6 @@
 {
     "name": "invisible-post-status",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Adds a custom post status 'invisible' to WordPress, allowing posts to be hidden from public listings while still being accessible via direct URL.",
     "author": "Carsten Bach",
     "license": "GPL-2.0-or-later",

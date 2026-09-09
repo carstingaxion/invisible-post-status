@@ -3,7 +3,7 @@
  * Plugin Name:       Invisible Post Status
  * Plugin URI:        https://github.com/carstingaxion/invisible-post-status
  * Description:       Adds a custom post status "invisible" to WordPress, allowing posts to be hidden from public listings while still being accessible via direct URL.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Carsten Bach
