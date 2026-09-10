@@ -75,7 +75,7 @@ if ( ! class_exists( 'Invisible_Post_Status_Setup' ) ) {
                     'publicly_queryable'        => true,  // Allows singular URL requests.
                     'exclude_from_search'       => true,  // Excludes from site search.
                     'show_in_admin_all_list'    => true,  // Shows under "All" in admin table.
-                    'show_in_admin_status_list' => false,  // Shows status filter link at top of table.
+                    'show_in_admin_status_list' => true,  // Shows status filter link at top of table.
                     /* translators: %s: number of invisible posts */
                     'label_count'               => _n_noop(
                         'Invisible <span class="count">(%s)</span>',
@@ -141,9 +141,15 @@ if ( ! class_exists( 'Invisible_Post_Status_Setup' ) ) {
          * @return array<string, string> Modified array of post states.
          */
         public function display_invisible_post_state( array $post_states, WP_Post $post ) :array {
+            // skip if we're already filtering by this status
+            if( 'invisible' === get_query_var( 'post_status' ) ) {
+                return $post_states;
+            }
+
             if ( 'gatherpress_play_sub' === $post->post_type && 'invisible' === $post->post_status ) {
                 $post_states['invisible'] = esc_html__( 'Invisible', 'textdomain' );
             }
+
             return $post_states;
         }
 
