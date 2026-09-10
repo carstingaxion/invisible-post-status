@@ -106,23 +106,24 @@ if ( ! class_exists( 'Invisible_Post_Status_Setup' ) ) {
 				return;
 			}
 
-			$post_status = (array) $query->get( 'post_status' );
-			$post_status = ( empty( $post_status ) || empty( $post_status[0] ) ) ? array( 'publish' ) : $post_status;
-			
+			$post_status          = (array) $query->get( 'post_status' );
+			$post_status_is_empty = ( empty( $post_status ) || empty( $post_status[0] ) ) ? true : false;
+
 			if (
 				// Only apply to main frontend singular queries for 'gatherpress_play_sub'.
 				! is_admin() && $query->is_singular() && $subsite_post_type === $query->get( 'post_type' )
 			) {
 				$allow_invisible = true;
+				$post_status     = $post_status_is_empty ? array( 'publish' ) : $post_status;
 				$post_status     = ( is_user_logged_in() ) ? array_merge( $post_status, array( 'private' ) ) : $post_status;
 			} elseif (
 				// Or, apply to main admin queries for the admin list tables.
-				is_admin() && $pagenow === 'edit.php' && ( empty( $post_status ) || empty( $post_status[0] ) ) &&
+				is_admin() && $pagenow === 'edit.php' && $post_status_is_empty &&
 				// Apply to main admin queries for 'gatherpress_play' or 'gatherpress_play_sub' in the admin list table.
 				in_array( $typenow, array( $parent_post_type, $subsite_post_type ), true )
 			) {
 				$allow_invisible = true;
-				$post_status     = array_merge( $post_status, array( 'private', 'protected', 'draft', 'pending' ) );
+				$post_status     = array_merge( $post_status, array( 'publish', 'private', 'protected', 'draft', 'pending' ) );
 			}
 
 			if ( $allow_invisible === true ) {
@@ -224,7 +225,7 @@ if ( ! class_exists( 'Invisible_Post_Status_Setup' ) ) {
 		 */
 		public function add_invisible_to_quick_edit(): void {
 			global $current_screen;
-			if ( ! $current_screen || 'gatherpress_play_sub' !== $current_screen->post_type ) {
+			if ( ! $current_screen instanceof WP_Screen || 'gatherpress_play_sub' !== $current_screen->post_type ) {
 				return;
 			}
 			?>
