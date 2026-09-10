@@ -93,7 +93,6 @@ if ( ! function_exists( 'invisible_post_status_init' ) ) {
 	 */
 	function invisible_post_status_init(): void {
 		Invisible_Post_Status_Setup::get_instance();
-
 	}
 	add_action( 'plugins_loaded', 'invisible_post_status_init' );
 }
