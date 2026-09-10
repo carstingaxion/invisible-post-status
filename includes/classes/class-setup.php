@@ -97,23 +97,36 @@ if ( ! class_exists( 'Invisible_Post_Status_Setup' ) ) {
         public function allow_invisible_singular_query( WP_Query $query ) :void {
             global $pagenow, $typenow;
 
+            $allow_invisible   = false;
             $parent_post_type  = 'gatherpress_play';
             $subsite_post_type = 'gatherpress_play_sub';
 
+            if ( ! $query->is_main_query() ) {
+                return;
+            }
+
+            $post_status = (array) $query->get( 'post_status' );
+            
             if (
                 // Only apply to main frontend singular queries for 'gatherpress_play_sub'.
-                ( ! is_admin() && $query->is_main_query() && $query->is_singular() )
-                ||
-                // Or, apply to main admin queries for 'gatherpress_play' in the admin list table.
-                ( is_admin() && $query->is_main_query() && $typenow === $parent_post_type && $pagenow === 'edit.php' )
-                ||
-                // Or, apply to main admin queries for 'gatherpress_play_sub' in the admin list table.
-                ( is_admin() && $query->is_main_query() && $typenow === $subsite_post_type && $pagenow === 'edit.php' )
+                ! is_admin() && $query->is_singular() && $subsite_post_type === $query->get( 'post_type' )
             ) {
-                $post_type = $query->get( 'post_type' );
-                if ( $subsite_post_type === $post_type || $parent_post_type === $post_type ) {
-                    $query->set( 'post_status', array( 'publish', 'invisible' ) );
-                }
+                $allow_invisible = true;
+                $post_status = ( empty( $post_status ) || empty( $post_status[0] ) ) ? array( 'publish' ) : $post_status;
+                $post_status = ( is_user_logged_in() ) ? array_merge( $post_status, array( 'private' ) ) : $post_status;
+            } elseif (
+                // Or, apply to main admin queries for the admin list tables.
+                is_admin() && $pagenow === 'edit.php' && ( empty( $post_status ) || empty( $post_status[0] ) ) &&
+                // Apply to main admin queries for 'gatherpress_play' or 'gatherpress_play_sub' in the admin list table.
+                in_array( $typenow, array( $parent_post_type, $subsite_post_type ), true )
+            ) {
+                $allow_invisible = true;
+                $post_status = ( empty( $post_status ) || empty( $post_status[0] ) ) ? array( 'publish' ) : $post_status;
+                $post_status = array_merge( $post_status, array( 'private', 'protected', 'draft', 'pending' ) );
+            }
+
+            if ( $allow_invisible === true ) {
+                $query->set( 'post_status', array_merge( $post_status, array( 'invisible' ) ) );
             }
         }
 
