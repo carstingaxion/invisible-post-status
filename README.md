@@ -8,6 +8,7 @@
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
 <!-- Playground badge -->
+[![Build, test & measure](https://github.com/carstingaxion/invisible-post-status/actions/workflows/build-test-measure.yml/badge.svg?branch=main)](https://github.com/carstingaxion/invisible-post-status/actions/workflows/build-test-measure.yml)
 ---
 
 ## Description
